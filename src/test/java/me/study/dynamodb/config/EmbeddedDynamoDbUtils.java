@@ -7,13 +7,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Supplier;
 
-/**
- * Helper class for initializing AWS DynamoDB to run with sqlite4java for local testing.
- * <p>
- * Copied from: https://github.com/redskap/aws-dynamodb-java-example-local-testing
- */
-public abstract class AwsDynamoDbLocalTestUtils {
-    private AwsDynamoDbLocalTestUtils() {
+public class EmbeddedDynamoDbUtils {
+    private EmbeddedDynamoDbUtils() {
     }
 
     private static final String BASE_LIBRARY_NAME = "sqlite4java";
@@ -180,4 +175,5 @@ public abstract class AwsDynamoDbLocalTestUtils {
     public static List<String> getClassPathList(final String classPath, final String pathSeparator) {
         return Arrays.asList(classPath.split(pathSeparator));
     }
+
 }
