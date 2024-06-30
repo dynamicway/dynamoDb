@@ -1,7 +1,8 @@
-package me.study.dynamodb.event;
+package me.study.dynamodb.event.application;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.study.dynamodb.event.domain.EventPrize;
 
 @Getter
 @RequiredArgsConstructor

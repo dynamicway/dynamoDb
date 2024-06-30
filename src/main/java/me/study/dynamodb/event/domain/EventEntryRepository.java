@@ -1,4 +1,4 @@
-package me.study.dynamodb.event;
+package me.study.dynamodb.event.domain;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

@@ -1,5 +1,6 @@
 package me.study.dynamodb.event.infrastructure;
 
+import me.study.dynamodb.event.domain.EventEntry;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -17,11 +18,15 @@ public class EventEntryTestRepository {
 
     private <T> DynamoDbTable<T> createTable(Class<T> tableBeanClass) {
         DynamoDbTable<T> dynamoDbTable = dynamoDbEnhancedClient.table("Event", TableSchema.fromBean(tableBeanClass));
-//        dynamoDbTable.createTable();
+        dynamoDbTable.createTable();
         return dynamoDbTable;
     }
 
     public void setCurrentEntrantsToMaximum() {
         eventDynamoDbTable.putItem(new EventDynamoDbTable(1000, 1000));
+    }
+
+    public void registerEntry(EventEntry eventEntry) {
+
     }
 }

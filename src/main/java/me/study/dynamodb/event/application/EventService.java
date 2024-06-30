@@ -1,6 +1,8 @@
-package me.study.dynamodb.event;
+package me.study.dynamodb.event.application;
 
 import lombok.RequiredArgsConstructor;
+import me.study.dynamodb.event.domain.EnterEventException;
+import me.study.dynamodb.event.domain.EventEntryRepository;
 import org.springframework.stereotype.Service;
 
 @Service

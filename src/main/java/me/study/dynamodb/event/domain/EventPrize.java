@@ -1,4 +1,4 @@
-package me.study.dynamodb.event;
+package me.study.dynamodb.event.domain;
 
 public enum EventPrize {
     COUPON,
