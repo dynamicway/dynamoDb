@@ -19,11 +19,12 @@ class EventServiceTest {
     @Test
     void can_not_enter_if_reached_the_maximum_entries() {
         eventEntryTestRepository.setCurrentEntrantsToMaximum();
+        long userId = 1L;
 
-        assertThatThrownBy(() -> sut.enterEvent(new EnterEventRequest(1L, EventPrize.COUPON)))
+        assertThatThrownBy(() -> sut.enterEvent(new EnterEventRequest(userId, EventPrize.COUPON)))
                 .isInstanceOf(EnterEventException.class)
                 .hasMessage("Reached the maximum entries.");
-        assertThat(sut.getUserEventEntries(1L)).isNull();
+        assertThat(sut.getUserEventEntries(userId)).isNull();
     }
 
 }
