@@ -25,16 +25,12 @@ public class EventService {
 
     void enterEvent(EnterEventRequest request) {
         eventEntryRepository.register(new EventEntry(request.getUserId(), request.getPrize()));
-
-        /*
-         * 아직 선착순 재고가 있는가
-         * 이미 신청한 이력이 있는가
-         * 응모
-         * */
     }
 
-    GetUserEventEntriesResponse getUserEventEntries(long userId) {
-        return null;
+    GetUserEventEntriesResponse getUserEventEntry(long userId) {
+        return eventEntryRepository.getUserEventEntry(userId)
+                                   .map(eventEntry -> new GetUserEventEntriesResponse(eventEntry.getUserId(), eventEntry.getPrize()))
+                                   .orElse(null);
     }
 
     GetEntrantsByPrizeResponse getEntrantsByPrize() {

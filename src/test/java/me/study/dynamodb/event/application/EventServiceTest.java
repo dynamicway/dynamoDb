@@ -1,7 +1,6 @@
 package me.study.dynamodb.event.application;
 
 import me.study.dynamodb.event.domain.EnterEventException;
-import me.study.dynamodb.event.domain.EventEntry;
 import me.study.dynamodb.event.domain.EventPrize;
 import me.study.dynamodb.event.infrastructure.EventEntryTestRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,18 +32,28 @@ class EventServiceTest {
         assertThatThrownBy(() -> sut.enterEvent(new EnterEventRequest(userId, EventPrize.COUPON)))
                 .isInstanceOf(EnterEventException.class)
                 .hasMessage("Reached the maximum entries.");
-        assertThat(sut.getUserEventEntries(userId)).isNull();
+        assertThat(sut.getUserEventEntry(userId)).isNull();
     }
 
     @Test
     void can_not_enter_if_already_entered() {
         long userId = 1L;
-        eventEntryTestRepository.registerEntry(new EventEntry(userId, EventPrize.POINT));
+        EventPrize originallyEnteredPrize = EventPrize.POINT;
+        sut.enterEvent(new EnterEventRequest(userId, originallyEnteredPrize));
 
         assertThatThrownBy(() -> sut.enterEvent(new EnterEventRequest(userId, EventPrize.COUPON)))
                 .isInstanceOf(EnterEventException.class)
                 .hasMessage("Already entered.");
-        assertThat(sut.getUserEventEntries(userId)).isEqualTo(new GetUserEventEntriesResponse(userId, EventPrize.POINT));
+        assertThat(sut.getUserEventEntry(userId)).isEqualTo(new GetUserEventEntriesResponse(userId, originallyEnteredPrize));
+    }
+
+    @Test
+    void get_user_event_entry() {
+        long userId = 1L;
+        EnterEventRequest enterEventRequest = new EnterEventRequest(userId, EventPrize.COUPON);
+        sut.enterEvent(enterEventRequest);
+
+        assertThat(sut.getUserEventEntry(userId)).isEqualTo(new GetUserEventEntriesResponse(userId, EventPrize.COUPON));
     }
 
 }

@@ -24,6 +24,10 @@ public class EntryDynamoDbTable {
         this.prize = prize;
     }
 
+    public EntryDynamoDbTable(long userId) {
+        this.userId = userId;
+    }
+
     @DynamoDbPartitionKey
     @DynamoDbAttribute("pk")
     public String getPartitionKey() {

@@ -1,6 +1,5 @@
 package me.study.dynamodb.event.infrastructure;
 
-import me.study.dynamodb.event.domain.EventEntry;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -52,7 +51,4 @@ public class EventEntryTestRepository {
                                                    .build());
     }
 
-    public void registerEntry(EventEntry eventEntry) {
-        entryDynamoDbTable.putItem(new EntryDynamoDbTable(eventEntry.getUserId(), eventEntry.getPrize()));
-    }
 }

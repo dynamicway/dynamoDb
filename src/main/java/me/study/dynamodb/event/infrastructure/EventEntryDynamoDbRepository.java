@@ -14,6 +14,8 @@ import software.amazon.awssdk.enhanced.dynamodb.model.TransactUpdateItemEnhanced
 import software.amazon.awssdk.services.dynamodb.model.ReturnValuesOnConditionCheckFailure;
 import software.amazon.awssdk.services.dynamodb.model.TransactionCanceledException;
 
+import java.util.Optional;
+
 @Repository
 @Slf4j
 public class EventEntryDynamoDbRepository implements EventEntryRepository {
@@ -54,6 +56,12 @@ public class EventEntryDynamoDbRepository implements EventEntryRepository {
                 }
             }
         }
+    }
+
+    @Override
+    public Optional<EventEntry> getUserEventEntry(long userId) {
+        return Optional.ofNullable(entryDynamoDbTable.getItem(new EntryDynamoDbTable(userId)))
+                       .map(i -> new EventEntry(userId, i.getPrize()));
     }
 
 }
