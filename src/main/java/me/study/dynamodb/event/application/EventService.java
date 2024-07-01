@@ -1,7 +1,7 @@
 package me.study.dynamodb.event.application;
 
 import lombok.RequiredArgsConstructor;
-import me.study.dynamodb.event.domain.EnterEventException;
+import me.study.dynamodb.event.domain.EventEntry;
 import me.study.dynamodb.event.domain.EventEntryRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ public class EventService {
     * */
 
     void enterEvent(EnterEventRequest request) {
-        throw new EnterEventException("Reached the maximum entries.");
+        eventEntryRepository.register(new EventEntry(request.getUserId(), request.getPrize()));
 
         /*
          * 아직 선착순 재고가 있는가

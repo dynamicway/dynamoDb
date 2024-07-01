@@ -4,6 +4,7 @@ import me.study.dynamodb.event.domain.EnterEventException;
 import me.study.dynamodb.event.domain.EventEntry;
 import me.study.dynamodb.event.domain.EventPrize;
 import me.study.dynamodb.event.infrastructure.EventEntryTestRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,11 @@ class EventServiceTest {
     @Autowired
     private EventService sut;
 
+    @BeforeEach
+    void setUp() {
+        eventEntryTestRepository.clear();
+    }
+
     @Test
     void can_not_enter_if_reached_the_maximum_entries() {
         eventEntryTestRepository.setCurrentEntrantsToMaximum();
@@ -33,7 +39,7 @@ class EventServiceTest {
     @Test
     void can_not_enter_if_already_entered() {
         long userId = 1L;
-        eventEntryTestRepository.registerEntry(new EventEntry(userId, EventPrize.COUPON));
+        eventEntryTestRepository.registerEntry(new EventEntry(userId, EventPrize.POINT));
 
         assertThatThrownBy(() -> sut.enterEvent(new EnterEventRequest(userId, EventPrize.COUPON)))
                 .isInstanceOf(EnterEventException.class)
