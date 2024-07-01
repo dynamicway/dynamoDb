@@ -2,34 +2,33 @@ package me.study.dynamodb.event.infrastructure;
 
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import software.amazon.awssdk.enhanced.dynamodb.extensions.annotations.DynamoDbAtomicCounter;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
 @Setter
-@DynamoDbBean
 @NoArgsConstructor
+@DynamoDbBean
 public class EventDynamoDbTable {
-    private long maximumEntries;
-    private long currentEntries;
-    private String partitionKey;
-    private String sortKey;
+    private String partitionKey = "Event";
+    private String sortKey = "maximumEntries";
+    private Long maximumEntries;
+    private Long currentEntries;
 
-    public EventDynamoDbTable(long maximumEntries, long currentEntries) {
+    public EventDynamoDbTable(long maximumEntries) {
         this.maximumEntries = maximumEntries;
-        this.currentEntries = currentEntries;
-        this.partitionKey = "Event";
-        this.sortKey = "maxEntries";
     }
 
     @DynamoDbAttribute("maximumEntries")
-    public long getMaximumEntries() {
+    public Long getMaximumEntries() {
         return maximumEntries;
     }
 
+    @DynamoDbAtomicCounter
     @DynamoDbAttribute("currentEntries")
-    public long getCurrentEntries() {
+    public Long getCurrentEntries() {
         return currentEntries;
     }
 
