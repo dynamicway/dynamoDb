@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 class EmbeddedDynamoDb {
     private DynamoDBProxyServer server;
 
-//    @PostConstruct
+    @PostConstruct
     public void start() throws Exception {
         if (server != null) {
             return;
