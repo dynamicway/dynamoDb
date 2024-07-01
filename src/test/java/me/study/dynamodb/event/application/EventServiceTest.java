@@ -61,4 +61,20 @@ class EventServiceTest {
         assertThat(sut.getUserEventEntry(1L)).isNull();
     }
 
+    @Test
+    void get_entries_by_prize() {
+        sut.enterEvent(new EnterEventRequest(1L, EventPrize.COUPON));
+        sut.enterEvent(new EnterEventRequest(3L, EventPrize.COUPON));
+        sut.enterEvent(new EnterEventRequest(5L, EventPrize.COUPON));
+        sut.enterEvent(new EnterEventRequest(7L, EventPrize.COUPON));
+        sut.enterEvent(new EnterEventRequest(2L, EventPrize.POINT));
+        sut.enterEvent(new EnterEventRequest(4L, EventPrize.POINT));
+        sut.enterEvent(new EnterEventRequest(6L, EventPrize.POINT));
+
+        GetEntrantsByPrizeResponse response = sut.getEntrantsByPrize(EventPrize.POINT);
+
+        assertThat(response.prize()).isEqualTo(EventPrize.POINT);
+        assertThat(response.userIds()).containsOnly(2L, 4L, 6L);
+    }
+
 }

@@ -1,5 +1,7 @@
 package me.study.dynamodb.event.infrastructure;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -13,6 +15,7 @@ import java.util.Map;
 
 @Repository
 public class EventEntryTestRepository {
+    private static final Logger log = LoggerFactory.getLogger(EventEntryTestRepository.class);
     private final DynamoDbClient dynamoDbClient;
     private final DynamoDbTable<EventDynamoDbTable> eventDynamoDbTable;
     private final DynamoDbTable<EntryDynamoDbTable> entryDynamoDbTable;
@@ -27,14 +30,14 @@ public class EventEntryTestRepository {
 
     private void createTable() {
         try {
-            eventDynamoDbTable.deleteTable();
+            entryDynamoDbTable.deleteTable();
         } catch (Exception e) {
-
+            log.error("delete table has an error.", e);
         }
         try {
-            eventDynamoDbTable.createTable();
+            entryDynamoDbTable.createTable();
         } catch (Exception e) {
-
+            log.error("create table has an error.", e);
         }
     }
 
