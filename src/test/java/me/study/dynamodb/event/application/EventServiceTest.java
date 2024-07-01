@@ -56,4 +56,9 @@ class EventServiceTest {
         assertThat(sut.getUserEventEntry(userId)).isEqualTo(new GetUserEventEntriesResponse(userId, EventPrize.COUPON));
     }
 
+    @Test
+    void if_there_is_no_entry_history_get_null() {
+        assertThat(sut.getUserEventEntry(1L)).isNull();
+    }
+
 }
