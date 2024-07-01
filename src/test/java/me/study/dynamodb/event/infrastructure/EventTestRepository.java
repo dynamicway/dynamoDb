@@ -1,7 +1,6 @@
 package me.study.dynamodb.event.infrastructure;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -13,14 +12,14 @@ import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
 
 import java.util.Map;
 
+@Slf4j
 @Repository
-public class EventEntryTestRepository {
-    private static final Logger log = LoggerFactory.getLogger(EventEntryTestRepository.class);
+public class EventTestRepository {
     private final DynamoDbClient dynamoDbClient;
     private final DynamoDbTable<EventDynamoDbTable> eventDynamoDbTable;
     private final DynamoDbTable<EntryDynamoDbTable> entryDynamoDbTable;
 
-    public EventEntryTestRepository(DynamoDbEnhancedClient dynamoDbEnhancedClient, DynamoDbClient dynamoDbClient) {
+    public EventTestRepository(DynamoDbEnhancedClient dynamoDbEnhancedClient, DynamoDbClient dynamoDbClient) {
         this.dynamoDbClient = dynamoDbClient;
         this.eventDynamoDbTable = dynamoDbEnhancedClient.table("Event", TableSchema.fromBean(EventDynamoDbTable.class));
         this.entryDynamoDbTable = dynamoDbEnhancedClient.table("Event", TableSchema.fromBean(EntryDynamoDbTable.class));

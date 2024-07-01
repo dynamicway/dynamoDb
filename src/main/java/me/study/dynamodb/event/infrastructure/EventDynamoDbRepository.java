@@ -3,7 +3,7 @@ package me.study.dynamodb.event.infrastructure;
 import lombok.extern.slf4j.Slf4j;
 import me.study.dynamodb.event.domain.EnterEventException;
 import me.study.dynamodb.event.domain.EventEntry;
-import me.study.dynamodb.event.domain.EventEntryRepository;
+import me.study.dynamodb.event.domain.EventRepository;
 import me.study.dynamodb.event.domain.EventPrize;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.core.pagination.sync.SdkIterable;
@@ -24,12 +24,12 @@ import java.util.Optional;
 
 @Repository
 @Slf4j
-public class EventEntryDynamoDbRepository implements EventEntryRepository {
+public class EventDynamoDbRepository implements EventRepository {
     private final DynamoDbEnhancedClient dynamoDbEnhancedClient;
     private final DynamoDbTable<EventDynamoDbTable> eventDynamoDbTable;
     private final DynamoDbTable<EntryDynamoDbTable> entryDynamoDbTable;
 
-    private EventEntryDynamoDbRepository(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+    private EventDynamoDbRepository(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
         this.dynamoDbEnhancedClient = dynamoDbEnhancedClient;
         this.eventDynamoDbTable = dynamoDbEnhancedClient.table("Event", TableSchema.fromBean(EventDynamoDbTable.class));
         this.entryDynamoDbTable = dynamoDbEnhancedClient.table("Event", TableSchema.fromBean(EntryDynamoDbTable.class));

@@ -2,11 +2,15 @@ package me.study.dynamodb.event.application;
 
 import me.study.dynamodb.event.domain.EnterEventException;
 import me.study.dynamodb.event.domain.EventPrize;
-import me.study.dynamodb.event.infrastructure.EventEntryTestRepository;
+import me.study.dynamodb.event.infrastructure.EventTestRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -14,19 +18,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 class EventServiceTest {
     @Autowired
-    private EventEntryTestRepository eventEntryTestRepository;
+    private EventTestRepository eventTestRepository;
 
     @Autowired
     private EventService sut;
 
     @BeforeEach
     void setUp() {
-        eventEntryTestRepository.clear();
+        eventTestRepository.clear();
     }
 
     @Test
     void can_not_enter_if_reached_the_maximum_entries() {
-        eventEntryTestRepository.setCurrentEntrantsToMaximum();
+        eventTestRepository.setCurrentEntrantsToMaximum();
         long userId = 1L;
 
         assertThatThrownBy(() -> sut.enterEvent(new EnterEventRequest(userId, EventPrize.COUPON)))
