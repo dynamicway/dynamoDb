@@ -59,7 +59,7 @@ public class EventEntryDynamoDbRepository implements EventEntryRepository {
     }
 
     @Override
-    public Optional<EventEntry> getUserEventEntry(long userId) {
+    public Optional<EventEntry> getEntryByUserId(long userId) {
         return Optional.ofNullable(entryDynamoDbTable.getItem(new EntryDynamoDbTable(userId)))
                        .map(i -> new EventEntry(userId, i.getPrize()));
     }

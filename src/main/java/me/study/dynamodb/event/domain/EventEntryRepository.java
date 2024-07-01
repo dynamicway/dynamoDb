@@ -6,5 +6,5 @@ public interface EventEntryRepository {
 
     void register(EventEntry entry);
 
-    Optional<EventEntry> getUserEventEntry(long userId);
+    Optional<EventEntry> getEntryByUserId(long userId);
 }

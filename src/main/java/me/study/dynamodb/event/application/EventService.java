@@ -28,7 +28,7 @@ public class EventService {
     }
 
     GetUserEventEntriesResponse getUserEventEntry(long userId) {
-        return eventEntryRepository.getUserEventEntry(userId)
+        return eventEntryRepository.getEntryByUserId(userId)
                                    .map(eventEntry -> new GetUserEventEntriesResponse(eventEntry.getUserId(), eventEntry.getPrize()))
                                    .orElse(null);
     }
