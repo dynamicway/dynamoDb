@@ -2,7 +2,7 @@ package me.study.dynamodb.event.application;
 
 import me.study.dynamodb.event.domain.EventPrize;
 
-public record GetUserEventEntriesResponse(
+public record GetUserEventEntryResponse(
         long userId,
         EventPrize prize
 ) {

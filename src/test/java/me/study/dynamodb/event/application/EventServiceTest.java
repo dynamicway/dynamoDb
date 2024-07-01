@@ -44,7 +44,7 @@ class EventServiceTest {
         assertThatThrownBy(() -> sut.enterEvent(new EnterEventRequest(userId, EventPrize.COUPON)))
                 .isInstanceOf(EnterEventException.class)
                 .hasMessage("Already entered.");
-        assertThat(sut.getUserEventEntry(userId)).isEqualTo(new GetUserEventEntriesResponse(userId, originallyEnteredPrize));
+        assertThat(sut.getUserEventEntry(userId)).isEqualTo(new GetUserEventEntryResponse(userId, originallyEnteredPrize));
     }
 
     @Test
@@ -53,7 +53,7 @@ class EventServiceTest {
         EnterEventRequest enterEventRequest = new EnterEventRequest(userId, EventPrize.COUPON);
         sut.enterEvent(enterEventRequest);
 
-        assertThat(sut.getUserEventEntry(userId)).isEqualTo(new GetUserEventEntriesResponse(userId, EventPrize.COUPON));
+        assertThat(sut.getUserEventEntry(userId)).isEqualTo(new GetUserEventEntryResponse(userId, EventPrize.COUPON));
     }
 
     @Test

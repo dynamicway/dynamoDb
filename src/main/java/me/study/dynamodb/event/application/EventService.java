@@ -17,9 +17,9 @@ public class EventService {
         eventEntryRepository.register(new EventEntry(request.userId(), request.prize()));
     }
 
-    GetUserEventEntriesResponse getUserEventEntry(long userId) {
+    GetUserEventEntryResponse getUserEventEntry(long userId) {
         return eventEntryRepository.getEntryByUserId(userId)
-                                   .map(eventEntry -> new GetUserEventEntriesResponse(eventEntry.getUserId(), eventEntry.getPrize()))
+                                      .map(eventEntry -> new GetUserEventEntryResponse(eventEntry.getUserId(), eventEntry.getPrize()))
                                    .orElse(null);
     }
 
