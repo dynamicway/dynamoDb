@@ -17,7 +17,6 @@ import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 import software.amazon.awssdk.enhanced.dynamodb.model.TransactPutItemEnhancedRequest;
 import software.amazon.awssdk.enhanced.dynamodb.model.TransactUpdateItemEnhancedRequest;
-import software.amazon.awssdk.services.dynamodb.model.ReturnValuesOnConditionCheckFailure;
 import software.amazon.awssdk.services.dynamodb.model.TransactionCanceledException;
 
 import java.util.List;
@@ -42,18 +41,17 @@ public class EventEntryDynamoDbRepository implements EventEntryRepository {
                                                                                                                     .item(new EventDynamoDbTable())
                                                                                                                     .ignoreNulls(true)
                                                                                                                     .conditionExpression(Expression.builder().expression("currentEntries < maximumEntries").build())
-                                                                                                                    .returnValuesOnConditionCheckFailure(ReturnValuesOnConditionCheckFailure.ALL_OLD)
                                                                                                                     .build();
         TransactPutItemEnhancedRequest<EntryDynamoDbTable> registerEntryRequest = TransactPutItemEnhancedRequest.builder(EntryDynamoDbTable.class)
                                                                                                                 .item(new EntryDynamoDbTable(entry.getUserId(), entry.getPrize()))
                                                                                                                 .conditionExpression(Expression.builder().expression("attribute_not_exists(pk) AND attribute_not_exists(sk)").build())
-                                                                                                                .returnValuesOnConditionCheckFailure(ReturnValuesOnConditionCheckFailure.ALL_OLD)
                                                                                                                 .build();
         try {
             dynamoDbEnhancedClient.transactWriteItems(t -> t.addUpdateItem(eventDynamoDbTable, updateStockRequest)
                                                             .addPutItem(entryDynamoDbTable, registerEntryRequest));
         } catch (TransactionCanceledException e) {
             log.error("Entry register has an error.", e);
+            // CancellationReasons의 순서는 Transaction 연산 순서와 같음. (https://docs.aws.amazon.com/ko_kr/amazondynamodb/latest/APIReference/API_TransactWriteItems.html)
             for (int i = 0; i < e.cancellationReasons().size(); i++) {
                 if (e.cancellationReasons().get(i).code().equals("ConditionalCheckFailed")) {
                     if (i == 0) {
