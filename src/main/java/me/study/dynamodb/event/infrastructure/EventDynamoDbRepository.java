@@ -26,26 +26,26 @@ import java.util.Optional;
 @Slf4j
 public class EventDynamoDbRepository implements EventRepository {
     private final DynamoDbEnhancedClient dynamoDbEnhancedClient;
-    private final DynamoDbTable<EventDynamoDbTable> eventDynamoDbTable;
-    private final DynamoDbTable<EntryDynamoDbTable> entryDynamoDbTable;
+    private final DynamoDbTable<EventDynamoDbItem> eventDynamoDbTable;
+    private final DynamoDbTable<EntryDynamoDbItem> entryDynamoDbTable;
 
     private EventDynamoDbRepository(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
         this.dynamoDbEnhancedClient = dynamoDbEnhancedClient;
-        this.eventDynamoDbTable = dynamoDbEnhancedClient.table("Event", TableSchema.fromBean(EventDynamoDbTable.class));
-        this.entryDynamoDbTable = dynamoDbEnhancedClient.table("Event", TableSchema.fromBean(EntryDynamoDbTable.class));
+        this.eventDynamoDbTable = dynamoDbEnhancedClient.table("Event", TableSchema.fromBean(EventDynamoDbItem.class));
+        this.entryDynamoDbTable = dynamoDbEnhancedClient.table("Event", TableSchema.fromBean(EntryDynamoDbItem.class));
     }
 
     @Override
     public void register(EventEntry entry) {
-        TransactUpdateItemEnhancedRequest<EventDynamoDbTable> updateStockRequest = TransactUpdateItemEnhancedRequest.builder(EventDynamoDbTable.class)
-                                                                                                                    .item(new EventDynamoDbTable())
-                                                                                                                    .ignoreNulls(true)
-                                                                                                                    .conditionExpression(Expression.builder().expression("currentEntries < maximumEntries").build())
-                                                                                                                    .build();
-        TransactPutItemEnhancedRequest<EntryDynamoDbTable> registerEntryRequest = TransactPutItemEnhancedRequest.builder(EntryDynamoDbTable.class)
-                                                                                                                .item(new EntryDynamoDbTable(entry.getUserId(), entry.getPrize()))
-                                                                                                                .conditionExpression(Expression.builder().expression("attribute_not_exists(pk) AND attribute_not_exists(sk)").build())
-                                                                                                                .build();
+        TransactUpdateItemEnhancedRequest<EventDynamoDbItem> updateStockRequest = TransactUpdateItemEnhancedRequest.builder(EventDynamoDbItem.class)
+                                                                                                                   .item(new EventDynamoDbItem())
+                                                                                                                   .ignoreNulls(true)
+                                                                                                                   .conditionExpression(Expression.builder().expression("currentEntries < maximumEntries").build())
+                                                                                                                   .build();
+        TransactPutItemEnhancedRequest<EntryDynamoDbItem> registerEntryRequest = TransactPutItemEnhancedRequest.builder(EntryDynamoDbItem.class)
+                                                                                                               .item(new EntryDynamoDbItem(entry.getUserId(), entry.getPrize()))
+                                                                                                               .conditionExpression(Expression.builder().expression("attribute_not_exists(pk) AND attribute_not_exists(sk)").build())
+                                                                                                               .build();
         try {
             dynamoDbEnhancedClient.transactWriteItems(t -> t.addUpdateItem(eventDynamoDbTable, updateStockRequest)
                                                             .addPutItem(entryDynamoDbTable, registerEntryRequest));
@@ -66,17 +66,17 @@ public class EventDynamoDbRepository implements EventRepository {
 
     @Override
     public Optional<EventEntry> getEntryByUserId(long userId) {
-        return Optional.ofNullable(entryDynamoDbTable.getItem(new EntryDynamoDbTable(userId)))
+        return Optional.ofNullable(entryDynamoDbTable.getItem(new EntryDynamoDbItem(userId)))
                        .map(i -> new EventEntry(userId, i.getPrize()));
     }
 
     @Override
     public List<EventEntry> getEntriesByPrize(EventPrize prize) {
-        SdkIterable<Page<EntryDynamoDbTable>> pagedResult = entryDynamoDbTable.index("prize").query(QueryEnhancedRequest.builder()
-                                                                                                                        .queryConditional(QueryConditional.keyEqualTo(Key.builder()
+        SdkIterable<Page<EntryDynamoDbItem>> pagedResult = entryDynamoDbTable.index("prize").query(QueryEnhancedRequest.builder()
+                                                                                                                       .queryConditional(QueryConditional.keyEqualTo(Key.builder()
                                                                                                                                                                          .partitionValue(prize.name())
                                                                                                                                                                          .build()))
-                                                                                                                        .build());
+                                                                                                                       .build());
 
         return pagedResult.stream()
                           .flatMap(page -> page.items().stream()

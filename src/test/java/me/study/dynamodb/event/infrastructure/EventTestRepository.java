@@ -16,13 +16,13 @@ import java.util.Map;
 @Repository
 public class EventTestRepository {
     private final DynamoDbClient dynamoDbClient;
-    private final DynamoDbTable<EventDynamoDbTable> eventDynamoDbTable;
-    private final DynamoDbTable<EntryDynamoDbTable> entryDynamoDbTable;
+    private final DynamoDbTable<EventDynamoDbItem> eventDynamoDbTable;
+    private final DynamoDbTable<EntryDynamoDbItem> entryDynamoDbTable;
 
     public EventTestRepository(DynamoDbEnhancedClient dynamoDbEnhancedClient, DynamoDbClient dynamoDbClient) {
         this.dynamoDbClient = dynamoDbClient;
-        this.eventDynamoDbTable = dynamoDbEnhancedClient.table("Event", TableSchema.fromBean(EventDynamoDbTable.class));
-        this.entryDynamoDbTable = dynamoDbEnhancedClient.table("Event", TableSchema.fromBean(EntryDynamoDbTable.class));
+        this.eventDynamoDbTable = dynamoDbEnhancedClient.table("Event", TableSchema.fromBean(EventDynamoDbItem.class));
+        this.entryDynamoDbTable = dynamoDbEnhancedClient.table("Event", TableSchema.fromBean(EntryDynamoDbItem.class));
 
         createTable();
     }
@@ -42,7 +42,7 @@ public class EventTestRepository {
 
     public void clear() {
         createTable();
-        eventDynamoDbTable.putItem(new EventDynamoDbTable(1000));
+        eventDynamoDbTable.putItem(new EventDynamoDbItem(1000));
     }
 
     public void setCurrentEntrantsToMaximum() {
@@ -53,4 +53,8 @@ public class EventTestRepository {
                                                    .build());
     }
 
+
+    private EntryDynamoDbItem getEntriesByUserId() {
+
+    }
 }

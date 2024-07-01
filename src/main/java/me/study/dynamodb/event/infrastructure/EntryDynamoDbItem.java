@@ -14,18 +14,18 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 @Setter
 @NoArgsConstructor
 @DynamoDbBean
-public class EntryDynamoDbTable {
+public class EntryDynamoDbItem {
     private String partitionKey;
     private String sortKey;
     private long userId;
     private EventPrize prize;
 
-    public EntryDynamoDbTable(long userId, EventPrize prize) {
+    public EntryDynamoDbItem(long userId, EventPrize prize) {
         this.userId = userId;
         this.prize = prize;
     }
 
-    public EntryDynamoDbTable(long userId) {
+    public EntryDynamoDbItem(long userId) {
         this.userId = userId;
     }
 

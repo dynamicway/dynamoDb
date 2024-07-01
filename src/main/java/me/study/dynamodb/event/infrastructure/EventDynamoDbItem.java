@@ -11,13 +11,13 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 @Setter
 @NoArgsConstructor
 @DynamoDbBean
-public class EventDynamoDbTable {
+public class EventDynamoDbItem {
     private String partitionKey = "Event";
     private String sortKey = "maximumEntries";
     private Long maximumEntries;
     private Long currentEntries;
 
-    public EventDynamoDbTable(long maximumEntries) {
+    public EventDynamoDbItem(long maximumEntries) {
         this.maximumEntries = maximumEntries;
     }
 
