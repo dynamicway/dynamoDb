@@ -1,7 +1,0 @@
-
-„
-java:S1075"ARefactor your code to get this URI from a customizable parameter.(çÑªÕ8¨³œË„2J$f2aea2b5-f3ff-42f2-ae8e-2d681d87bf19
-§
-java:S1128"_Remove this unused import 'software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider'.(óá²Çþÿÿÿÿ8²³œË„2J$921cec81-e229-42ae-9022-0237adb8b9d0
-ª
-java:S1128"bRemove this unused import 'software.amazon.awssdk.core.client.config.ClientOverrideConfiguration'.(­ë£´ûÿÿÿÿ8»³ÅË„2J$126dcd0e-eb96-4756-827c-f2e2ecb3d8a3
