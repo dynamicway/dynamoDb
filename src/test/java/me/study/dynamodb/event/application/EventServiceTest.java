@@ -48,6 +48,16 @@ class EventServiceTest {
     }
 
     @Test
+    void enter_event() {
+        long userId = 1L;
+        EventPrize prize = EventPrize.POINT;
+
+        sut.enterEvent(new EnterEventRequest(userId, prize));
+
+        assertThat(sut.getUserEventEntry(userId)).isEqualTo(new GetUserEventEntryResponse(userId, prize));
+    }
+
+    @Test
     void get_user_event_entry() {
         long userId = 1L;
         EnterEventRequest enterEventRequest = new EnterEventRequest(userId, EventPrize.COUPON);
