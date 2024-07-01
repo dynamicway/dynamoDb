@@ -3,6 +3,7 @@ package me.study.dynamodb.event.application;
 import lombok.RequiredArgsConstructor;
 import me.study.dynamodb.event.domain.EventEntry;
 import me.study.dynamodb.event.domain.EventEntryRepository;
+import me.study.dynamodb.event.domain.EventPrize;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,7 +25,7 @@ public class EventService {
     * */
 
     void enterEvent(EnterEventRequest request) {
-        eventEntryRepository.register(new EventEntry(request.getUserId(), request.getPrize()));
+        eventEntryRepository.register(new EventEntry(request.userId(), request.prize()));
     }
 
     GetUserEventEntriesResponse getUserEventEntry(long userId) {
@@ -33,7 +34,8 @@ public class EventService {
                                    .orElse(null);
     }
 
-    GetEntrantsByPrizeResponse getEntrantsByPrize() {
+    GetEntrantsByPrizeResponse getEntrantsByPrize(EventPrize prize) {
+        eventEntryRepository.getEntriesByPrize(prize);
         return null;
     }
 
