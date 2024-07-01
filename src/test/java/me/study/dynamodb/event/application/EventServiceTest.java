@@ -2,12 +2,14 @@ package me.study.dynamodb.event.application;
 
 import me.study.dynamodb.event.domain.EnterEventException;
 import me.study.dynamodb.event.domain.EventPrize;
+import me.study.dynamodb.event.infrastructure.EntryDynamoDbItem;
 import me.study.dynamodb.event.infrastructure.EventTestRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -59,6 +61,32 @@ class EventServiceTest {
         sut.enterEvent(new EnterEventRequest(userId, prize));
 
         assertThat(sut.getUserEventEntry(userId)).isEqualTo(new GetUserEventEntryResponse(userId, prize));
+    }
+
+    @Test
+    void multiple_entries_at_the_same_time_will_only_be_entered_once() throws InterruptedException {
+        long userId = 1L;
+        EventPrize prize = EventPrize.POINT;
+
+        ExecutorService executorService = Executors.newFixedThreadPool(100);
+        CountDownLatch countDownLatch = new CountDownLatch(100);
+        for (int i = 0; i < 100; i++) {
+            executorService.submit(() -> {
+                try {
+                    sut.enterEvent(new EnterEventRequest(userId, prize));
+                } finally {
+                    countDownLatch.countDown();
+                }
+            });
+        }
+        countDownLatch.await();
+        List<EntryDynamoDbItem> entries = eventTestRepository.getEntriesByUserId();
+
+        assertThat(entries).hasSize(1);
+        assertThat(entries.getFirst()).satisfies(entry -> {
+            assertThat(entry.getUserId()).isEqualTo(userId);
+            assertThat(entry.getPrize()).isEqualTo(prize);
+        });
     }
 
     @Test

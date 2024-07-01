@@ -4,12 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Expression;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.ScanEnhancedRequest;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate;
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -54,7 +57,15 @@ public class EventTestRepository {
     }
 
 
-    private EntryDynamoDbItem getEntriesByUserId() {
-
+    public List<EntryDynamoDbItem> getEntriesByUserId() {
+        return entryDynamoDbTable.scan(ScanEnhancedRequest.builder()
+                                                          .filterExpression(Expression.builder()
+                                                                                      .expression("begins_with(pk, :val)")
+                                                                                      .putExpressionValue(":val", AttributeValue.fromS("u"))
+                                                                                      .build())
+                                                          .consistentRead(true)
+                                                          .build())
+                                 .items().stream()
+                                 .toList();
     }
 }
