@@ -3,9 +3,11 @@ package me.study.dynamodb.event.application;
 import me.study.dynamodb.event.domain.EnterEventException;
 import me.study.dynamodb.event.domain.EventPrize;
 import me.study.dynamodb.event.infrastructure.EntryDynamoDbItem;
+import me.study.dynamodb.event.infrastructure.EventDynamoDbItem;
 import me.study.dynamodb.event.infrastructure.EventTestRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.matchers.Same;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -95,6 +98,18 @@ class EventServiceTest {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    void the_maximum_entry_limit_is_met_even_if_multiple_people_enter_at_the_same_time() {
+        AtomicLong atomicLong = new AtomicLong();
+
+        runParallelTasks(() -> sut.enterEvent(new EnterEventRequest(atomicLong.incrementAndGet(), EventPrize.COUPON)), 2000);
+
+        List<EntryDynamoDbItem> entries = eventTestRepository.getEntriesByUserId();
+        EventDynamoDbItem event = eventTestRepository.getEvent();
+        assertThat(entries).hasSize(1000);
+        assertThat(event.getCurrentEntries()).isEqualTo(1000);
     }
 
     @Test

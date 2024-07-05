@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Expression;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.model.ScanEnhancedRequest;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -67,5 +68,12 @@ public class EventTestRepository {
                                                           .build())
                                  .items().stream()
                                  .toList();
+    }
+
+    public EventDynamoDbItem getEvent() {
+        return eventDynamoDbTable.getItem(Key.builder()
+                                             .partitionValue("Event")
+                                             .sortValue("maximumEntries")
+                                             .build());
     }
 }
