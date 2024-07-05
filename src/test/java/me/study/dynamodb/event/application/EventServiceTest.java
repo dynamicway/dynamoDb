@@ -72,13 +72,15 @@ class EventServiceTest {
         EventPrize prize = EventPrize.POINT;
 
         runParallelTasks(() -> sut.enterEvent(new EnterEventRequest(userId, prize)), 100);
-        List<EntryDynamoDbItem> entries = eventTestRepository.getEntriesByUserId();
 
+        List<EntryDynamoDbItem> entries = eventTestRepository.getEntriesByUserId();
+        EventDynamoDbItem event = eventTestRepository.getEvent();
         assertThat(entries).hasSize(1);
         assertThat(entries.getFirst()).satisfies(entry -> {
             assertThat(entry.getUserId()).isEqualTo(userId);
             assertThat(entry.getPrize()).isEqualTo(prize);
         });
+        assertThat(event.getCurrentEntries()).isOne();
     }
 
     private void runParallelTasks(Runnable runnable, int taskCount) {
