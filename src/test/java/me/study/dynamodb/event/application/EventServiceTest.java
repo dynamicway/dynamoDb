@@ -64,22 +64,11 @@ class EventServiceTest {
     }
 
     @Test
-    void multiple_entries_at_the_same_time_will_only_be_entered_once() throws InterruptedException {
+    void multiple_entries_at_the_same_time_will_only_be_entered_once() {
         long userId = 1L;
         EventPrize prize = EventPrize.POINT;
 
-        ExecutorService executorService = Executors.newFixedThreadPool(100);
-        CountDownLatch countDownLatch = new CountDownLatch(100);
-        for (int i = 0; i < 100; i++) {
-            executorService.submit(() -> {
-                try {
-                    sut.enterEvent(new EnterEventRequest(userId, prize));
-                } finally {
-                    countDownLatch.countDown();
-                }
-            });
-        }
-        countDownLatch.await();
+        runParallelTasks(() -> sut.enterEvent(new EnterEventRequest(userId, prize)), 100);
         List<EntryDynamoDbItem> entries = eventTestRepository.getEntriesByUserId();
 
         assertThat(entries).hasSize(1);
@@ -87,6 +76,25 @@ class EventServiceTest {
             assertThat(entry.getUserId()).isEqualTo(userId);
             assertThat(entry.getPrize()).isEqualTo(prize);
         });
+    }
+
+    private void runParallelTasks(Runnable runnable, int taskCount) {
+        ExecutorService executorService = Executors.newFixedThreadPool(100);
+        CountDownLatch countDownLatch = new CountDownLatch(taskCount);
+        for (int i = 0; i < taskCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    runnable.run();
+                } finally {
+                    countDownLatch.countDown();
+                }
+            });
+        }
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
